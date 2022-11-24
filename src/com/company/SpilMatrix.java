@@ -6,8 +6,8 @@ import java.util.Scanner;
 public class SpilMatrix {
 
 
-    int rows = 6;
-    int columns = 9;
+    int højde = 6;
+    int bredde = 9;
     boolean xTur = true;
     boolean førsteRunde = true;
     boolean run = true;
@@ -20,7 +20,7 @@ public class SpilMatrix {
 
 
     public void setup() {
-        arrayMatrix = new String[rows][columns];
+        arrayMatrix = new String[højde][bredde];
         xArrayMatrix = arrayMatrix;
         yArrayMatrix = arrayMatrix;
 
@@ -127,6 +127,7 @@ public class SpilMatrix {
     }
 
     public boolean turErIgang() {
+        SpilMatrix spilMatrix = new SpilMatrix();
         boolean turErIgang = true;
 
         if (xTur) { //Tjekker hvis xTur er true (X's tur er igang)
@@ -135,14 +136,16 @@ public class SpilMatrix {
                 turErIgang = placerBrik(rykBrik, xArrayMatrix); // TurErIgang skal have værdi fra placerBrik
 
 
-
+                if (gennemløbRows("X", xArrayMatrix) || gennemløbColumns("X", xArrayMatrix, spilMatrix.højde, spilMatrix.bredde)){
+                    return false;
+                }
               //  if (gennemløbRows("X", xArrayMatrix) || gennemløbDiagonal1("X", xArrayMatrix)) { //true for at tjekke vandret
                 //    return false;
                 //}
 
-                if (gennemløbDiagonal1("X", xArrayMatrix)){
-                    return false;
-                }
+             //   if (gennemløbDiagonal1("X", xArrayMatrix)){
+               //     return false;
+                //}
 
               // if (gennemløbColumns("X", xArrayMatrix)){
                 //   return false;
@@ -155,13 +158,17 @@ public class SpilMatrix {
                 int rykBrik = indtastBrik();
                 turErIgang = placerBrik(rykBrik, yArrayMatrix);
 
+                if( gennemløbRows("Y", yArrayMatrix) || gennemløbColumns("Y", yArrayMatrix, spilMatrix.højde, spilMatrix.bredde)){
+                    return false;
+                }
+
              //   if (gennemløbRows("Y", yArrayMatrix) || gennemløbDiagonal1("Y", yArrayMatrix) ) {
                //     return false;
                 //}
 
-                if (gennemløbDiagonal1("Y", yArrayMatrix)){
-                    return false;
-                }
+              //  if (gennemløbDiagonal1("Y", yArrayMatrix)){
+               //     return false;
+              //  }
 
               //  if (gennemløbColumns("Y", yArrayMatrix)){
                 //   return false;
@@ -238,48 +245,38 @@ public class SpilMatrix {
     }
 
 
-    public boolean gennemløbColumns(String findValue, String[][] array){
+
+     //Løber lodret
+    public boolean gennemløbColumns (String findValue, String[][] array, int højde, int bredde) {
         int tempMax = 0;
-
-        for (int row = 0; row <= array.length; row++) {
+        for (int i = 0; i < bredde; i++) {
             int count = 0;
-
-            String indexValue;
-            for (int column = 0; column <= array[row].length; column++) {
-                indexValue = array[column][row]; // da column står før row, gennemløber vi alle colums for hver row.
-
+            for (int j = 0; j < højde; j++) {
+                String indexValue = array[j][i];
                 if (indexValue.equals(findValue)) { // find value er om det er -1,1 eller 0, alt efter hvad argumentet er
                     count++;
                     if (count > tempMax) {
                         tempMax = count;
                     }
                 } else {
-                    // if (count >= tempMax) {
-                    //   tempMax = count; // gemmer count som max
                     count = 0; //sætter count til 0 for at starte count forfra
-                    //  indexValue = test[r][row];
-                    //}
                 }
-
 
             }
         }
-       // this.tempValue = tempMax;
-
         return tjekVundetSpil(tempMax);
-
-
     }
+
 
     public boolean gennemløbDiagonal1(String findValue, String [][] array){
         int tempMax = 0;
 
-        for (int row = 0; row <= rows + columns; row++) {
+        for (int row = 0; row <= højde + bredde; row++) {
             int count = 0;
 
             for (int column = 1; column <= row-1; column++) {
                 int nyrow = row - column;
-                if (nyrow < columns && column < rows) {
+                if (nyrow < bredde && column < højde) {
                     String indexValue = array[nyrow][column];
 
                     if (indexValue == findValue) { // find value er om det er -1,1 eller 0, alt efter hvad argumentet er
