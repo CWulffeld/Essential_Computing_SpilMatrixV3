@@ -5,13 +5,11 @@ import java.util.Scanner;
 
 public class SpilMatrix {
 
-
     int højde = 6;
     int bredde = 9;
     boolean xTur = true;
     boolean førsteRunde = true;
     boolean run = true;
-   // int tempValue;
 
     String[][] arrayMatrix;
     String[][] xArrayMatrix;
@@ -77,6 +75,9 @@ public class SpilMatrix {
                 } else {
                     startArrayMatrix[row][column] = "O";
 
+                    /**
+                     * Prøv at rykke nedenstående ud i en metode, skal bliver kaldt med parameter column
+                     */
                     //Inspiration:https://www.tutorialspoint.com/how-to-populate-a-2d-array-with-random-alphabetic-values-from-a-range-in-java
                     if (column == 8 || column == 0) { //Hvis vi er på kollonne  0 eller 8, skal vi indsætte random char i stedet for
                         int num = random.nextInt(2); //bounds er 2, laver et random tal mellem 0 og 1
@@ -154,13 +155,12 @@ public class SpilMatrix {
             }
         }
 
-        førsteRunde = false;
+        førsteRunde = false; //Sætter første runde til false efter det
         return true;
-
     }
 
+    //Metode retunerer enten en true eller false, alt efter om brikken kan placeres
     public boolean placerBrik(int brikColumnNummer, String[][] array) {
-
         for (int row = 0; row < array.length; row++) {
             String brik = array[row][brikColumnNummer];
 
@@ -176,7 +176,7 @@ public class SpilMatrix {
                 return false; //Turen slutter og brik er tegnet
             }
 
-            //Tjekker om den sidste row
+            //Tjekker om det er den sidste row
             if (row == array.length - 1) { //length tæller fra 1, derfor -1
                 tegnBrik(array, row, brikColumnNummer);
                 return false;
@@ -243,20 +243,16 @@ public class SpilMatrix {
         return tjekVundetSpil(tempMax);
     }
 
-    /**
-     * VIRKER IKKE ENDNU, DIAGONAL SKAL FIKSES BEGGE RETNINGER.
-     */
-    //Gennemløber diagonalt en retning
-    public boolean gennemløbDiagonal1(String findValue, String [][] array, int højde, int bredde) {
+    //Gennemløber diagonalt retning
+    public boolean gennemløbDiagonal1 (String findValue, String [][] array, int højde, int bredde){
         int tempMax = 0;
         for (int k = 0; k < (højde + bredde) * 2; k++) {
-            for (int j = 0; j <= k; j++) {
             int count = 0;
+            for (int j = 1; j <= k && j<bredde-1; j++) { //Starter på 1 da colum 0 ikke skal loopes igennem, kører indtil bredde-1 for ikke få sidste colum med
                 int i = k - j;
                 if (i < højde && j < bredde) {
-                    String indexValue = array[i][j];
-                   // String indexValue = String.valueOf(array[i][j]);
-                    if (indexValue.equals(findValue)) { // find value er om det er X eller Y, alt efter hvad værdien i parameteren er
+                    String indexValue =  array[i][j];
+                    if (indexValue == findValue) { // find value er om det er -1,1 eller 0, alt efter hvad argumentet er
                         count++;
                         if (count > tempMax) {
                             tempMax = count;
@@ -282,13 +278,7 @@ public class SpilMatrix {
     }
 
 
-   /* public void bytSpillerTur(){
-        if(spiller == 1) {
-            spiller =  2;
-        } else{
-            spiller = 1;
-        }
-    }*/
+
 
 
    /* public boolean erMatrixFyldt(){
