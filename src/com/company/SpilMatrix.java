@@ -135,7 +135,9 @@ public class SpilMatrix {
                 int rykBrik = indtastBrik();
                 turErIgang = placerBrik(rykBrik, xArrayMatrix); // TurErIgang skal have værdi fra placerBrik
 
-                if (gennemløbRows("X", xArrayMatrix) || gennemløbColumns("X", xArrayMatrix, spilMatrix.højde, spilMatrix.bredde)){
+                if (gennemløbRows("X", xArrayMatrix)
+                        || gennemløbColumns("X", xArrayMatrix, spilMatrix.højde, spilMatrix.bredde)
+                        || gennemløbDiagonal1("X", xArrayMatrix, spilMatrix.højde, spilMatrix.bredde)){
                     return false;
                 }
             }
@@ -144,7 +146,9 @@ public class SpilMatrix {
                 int rykBrik = indtastBrik();
                 turErIgang = placerBrik(rykBrik, yArrayMatrix);
 
-                if( gennemløbRows("Y", yArrayMatrix) || gennemløbColumns("Y", yArrayMatrix, spilMatrix.højde, spilMatrix.bredde)){
+                if( gennemløbRows("Y", yArrayMatrix)
+                        || gennemløbColumns("Y", yArrayMatrix, spilMatrix.højde, spilMatrix.bredde)
+                        || gennemløbDiagonal1("Y", yArrayMatrix, spilMatrix.højde, spilMatrix.bredde)){
                     return false;
                 }
             }
@@ -218,16 +222,14 @@ public class SpilMatrix {
         return tjekVundetSpil(tempMax);
     }
 
-
-
-     //Løber lodret
+    //Gennemløber lodret
     public boolean gennemløbColumns (String findValue, String[][] array, int højde, int bredde) {
         int tempMax = 0;
-        for (int i = 0; i < bredde; i++) {
+        for (int i = 1; i < bredde-1; i++) {
             int count = 0;
             for (int j = 0; j < højde; j++) {
                 String indexValue = array[j][i];
-                if (indexValue.equals(findValue)) { // find value er om det er -1,1 eller 0, alt efter hvad argumentet er
+                if (indexValue.equals(findValue)) { //Hvis indexValue som er værdien på det givne indeks, er lig med værdien fra parameteren
                     count++;
                     if (count > tempMax) {
                         tempMax = count;
@@ -241,32 +243,34 @@ public class SpilMatrix {
         return tjekVundetSpil(tempMax);
     }
 
-
-    public boolean gennemløbDiagonal1(String findValue, String [][] array){
+    /**
+     * VIRKER IKKE ENDNU, DIAGONAL SKAL FIKSES BEGGE RETNINGER.
+     */
+    //Gennemløber diagonalt en retning
+    public boolean gennemløbDiagonal1(String findValue, String [][] array, int højde, int bredde) {
         int tempMax = 0;
-
-        for (int row = 0; row <= højde + bredde; row++) {
+        for (int k = 0; k < (højde + bredde) * 2; k++) {
+            for (int j = 0; j <= k; j++) {
             int count = 0;
-
-            for (int column = 1; column <= row-1; column++) {
-                int nyrow = row - column;
-                if (nyrow < bredde && column < højde) {
-                    String indexValue = array[nyrow][column];
-
-                    if (indexValue == findValue) { // find value er om det er -1,1 eller 0, alt efter hvad argumentet er
+                int i = k - j;
+                if (i < højde && j < bredde) {
+                    String indexValue = array[i][j];
+                   // String indexValue = String.valueOf(array[i][j]);
+                    if (indexValue.equals(findValue)) { // find value er om det er X eller Y, alt efter hvad værdien i parameteren er
                         count++;
                         if (count > tempMax) {
                             tempMax = count;
                         }
                     } else {
                         count = 0; //sætter count til 0 for at starte count forfra
-
                     }
                 }
             }
+
         }
         return tjekVundetSpil(tempMax);
     }
+
 
     public boolean tjekVundetSpil(int tempMax){
         if (tempMax >= 5) {
