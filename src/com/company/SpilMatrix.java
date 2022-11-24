@@ -135,23 +135,9 @@ public class SpilMatrix {
                 int rykBrik = indtastBrik();
                 turErIgang = placerBrik(rykBrik, xArrayMatrix); // TurErIgang skal have værdi fra placerBrik
 
-
                 if (gennemløbRows("X", xArrayMatrix) || gennemløbColumns("X", xArrayMatrix, spilMatrix.højde, spilMatrix.bredde)){
                     return false;
                 }
-              //  if (gennemløbRows("X", xArrayMatrix) || gennemløbDiagonal1("X", xArrayMatrix)) { //true for at tjekke vandret
-                //    return false;
-                //}
-
-             //   if (gennemløbDiagonal1("X", xArrayMatrix)){
-               //     return false;
-                //}
-
-              // if (gennemløbColumns("X", xArrayMatrix)){
-                //   return false;
-                //}
-
-
             }
         } else { // Ellers er det Y's tur
             while (turErIgang) {
@@ -161,18 +147,6 @@ public class SpilMatrix {
                 if( gennemløbRows("Y", yArrayMatrix) || gennemløbColumns("Y", yArrayMatrix, spilMatrix.højde, spilMatrix.bredde)){
                     return false;
                 }
-
-             //   if (gennemløbRows("Y", yArrayMatrix) || gennemløbDiagonal1("Y", yArrayMatrix) ) {
-               //     return false;
-                //}
-
-              //  if (gennemløbDiagonal1("Y", yArrayMatrix)){
-               //     return false;
-              //  }
-
-              //  if (gennemløbColumns("Y", yArrayMatrix)){
-                //   return false;
-                //}
             }
         }
 
