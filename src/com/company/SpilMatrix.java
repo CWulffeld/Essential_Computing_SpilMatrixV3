@@ -10,6 +10,8 @@ public class SpilMatrix {
     boolean xTur = true;
     boolean førsteRunde = true;
     boolean run = true;
+    int rowNr;
+
 
     String[][] arrayMatrix;
     String[][] xArrayMatrix;
@@ -46,6 +48,8 @@ public class SpilMatrix {
         }
         System.out.println();
 
+
+
         //try-catch så der skal skrives en int, og string modtages ikke
         try {
             rykBrik = Integer.parseInt(scanner.next()); //konverterer til en int
@@ -77,6 +81,7 @@ public class SpilMatrix {
 
                     /**
                      * Prøv at rykke nedenstående ud i en metode, skal bliver kaldt med parameter column
+                     *Metode: indsæt random Tokens
                      */
                     //Inspiration:https://www.tutorialspoint.com/how-to-populate-a-2d-array-with-random-alphabetic-values-from-a-range-in-java
                     if (column == 8 || column == 0) { //Hvis vi er på kollonne  0 eller 8, skal vi indsætte random char i stedet for
@@ -133,23 +138,27 @@ public class SpilMatrix {
 
         if (xTur) { //Tjekker hvis xTur er true (X's tur er igang)
             while (turErIgang) {
-                int rykBrik = indtastBrik();
-                turErIgang = placerBrik(rykBrik, xArrayMatrix); // TurErIgang skal have værdi fra placerBrik
+                int rykBrikX = indtastBrik();
+                turErIgang = placerBrik(rykBrikX, xArrayMatrix); // TurErIgang skal have værdi fra placerBrik
 
                 if (gennemløbRows("X", xArrayMatrix)
                         || gennemløbColumns("X", xArrayMatrix, spilMatrix.højde, spilMatrix.bredde)
-                        || gennemløbDiagonal1("X", xArrayMatrix, spilMatrix.højde, spilMatrix.bredde)){
+                        || gennemløbDiagonal1("X", xArrayMatrix, spilMatrix.højde, spilMatrix.bredde)
+                        || diagonalVenstreOpTilNed("X", xArrayMatrix, rykBrikX)
+                        || diagonalVenstreNedTilOp("X", xArrayMatrix, rykBrikX)){
                     return false;
                 }
             }
         } else { // Ellers er det Y's tur
             while (turErIgang) {
-                int rykBrik = indtastBrik();
-                turErIgang = placerBrik(rykBrik, yArrayMatrix);
+                int rykBrikY = indtastBrik();
+                turErIgang = placerBrik(rykBrikY, yArrayMatrix);
 
                 if( gennemløbRows("Y", yArrayMatrix)
                         || gennemløbColumns("Y", yArrayMatrix, spilMatrix.højde, spilMatrix.bredde)
-                        || gennemløbDiagonal1("Y", yArrayMatrix, spilMatrix.højde, spilMatrix.bredde)){
+                        || gennemløbDiagonal1("Y", yArrayMatrix, spilMatrix.højde, spilMatrix.bredde)
+                        || diagonalVenstreOpTilNed("Y", yArrayMatrix, rykBrikY)
+                        || diagonalVenstreNedTilOp("Y", yArrayMatrix, rykBrikY)){
                     return false;
                 }
             }
@@ -173,14 +182,28 @@ public class SpilMatrix {
             //Tjekker om pladsen ikke har "O" som værdi, så står der X eller Y
             if (!brik.equals("O")) { //Hvis der allerede står X eller Y
                 tegnBrik(array, row - 1, brikColumnNummer);
+                this.rowNr = row-1;
                 return false; //Turen slutter og brik er tegnet
             }
 
             //Tjekker om det er den sidste row
             if (row == array.length - 1) { //length tæller fra 1, derfor -1
                 tegnBrik(array, row, brikColumnNummer);
-                return false;
+                this.rowNr = row;
+                return false; //Turen slutter og brik er tegnet
             }
+
+            /**
+             * Metode til hvis matrixen er fyldt helt op og ingen har vundet
+             * Skal tjekke om alle værdierne på row 0 er enten X eller Y -> hvis dette er tilfældet
+             * skal den gå ud af programmet og sige "ingen har vundet"
+             */
+           /* for (int colum = 0; colum < array[row].length ; colum++) {
+                if (row == 0 && colum == colum){
+                }
+            }*/
+
+
         }
         return true;
     }
@@ -195,6 +218,10 @@ public class SpilMatrix {
         }
         xTur = !xTur; //Sætter xtur til det modsatte af hvad den er nu, for at skifte mellem player 1 og 2
     }
+
+    /**
+     * Skal de næste metoder rykkes ud i en klasse der hedder GennemløbMatrix
+     */
 
     //Gennemløber vandret
     public boolean gennemløbRows(String findValue, String[][] array) {
@@ -268,6 +295,54 @@ public class SpilMatrix {
     }
 
 
+    //Ud fra placering, kigger metoden på det næste index der er en kolonne større samt en row større: tjekker fra placering op til ned
+    public boolean diagonalVenstreOpTilNed(String findValue, String [][] array, int columnNr) {
+         int column = columnNr;
+         int row = rowNr;
+         int tempMax  = 1;
+        boolean run = true;
+        while (run){
+            column = column + 1;
+            row = row + 1;
+
+            if (column >= 9 || row >=6){
+                break;
+            }
+            if (array[row][column] == findValue){
+                tempMax++;
+            }else {
+                break;
+            }
+        }
+
+        return tjekVundetSpil(tempMax);
+
+    }
+
+    public boolean diagonalVenstreNedTilOp(String findValue, String [][] array, int columnNr) {
+        int column = columnNr;
+        int row = rowNr;
+        int tempMax  = 1;
+        boolean run = true;
+        while (run){
+            column = column - 1;
+            row = row - 1;
+
+            if (column <= 0 || row <=0){
+                break;
+            }
+            if (array[row][column] == findValue){
+                tempMax++;
+            }else {
+                break;
+            }
+        }
+
+        return tjekVundetSpil(tempMax);
+
+    }
+
+
     public boolean tjekVundetSpil(int tempMax){
         if (tempMax >= 5) {
             System.out.println("Du har vundet");
@@ -278,17 +353,4 @@ public class SpilMatrix {
     }
 
 
-
-
-
-   /* public boolean erMatrixFyldt(){
-        boolean fyldt = true;
-        for (int row = 0; row <1 ; row++) {
-            for (int column = 0; column < arrayMatrix[rows].length ; column++) {
-                if (!arrayMatrix[row][column].equals("X") && !arrayMatrix[row][column].equals("Y") )
-            }
-
-        }
-    }
-*/
 }
